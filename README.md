@@ -44,12 +44,12 @@ If desired, the user can implement their own error calculation functions instead
 
 First, you will need to install a suitable conda environment (or satisfy the python packages required in some other way).  An `environment.yml` file is supplied here which can be used to create an environment which is known to work, though it does include some extra unneccesary dependencies.
 
-```
+```bash
 conda env create -f environment.yml
 conda activate dem_processor
 ```
 
-The above will install and activate the new environment, called `dem-processor`.
+The above will install and activate the new environment, called `dem_processor`.
 
 To use the code, you will need to clone this repository in the usual way.  The main program is `dem_processor.py`.
 
@@ -67,7 +67,7 @@ The code is designed to work with certain standard directories and file naming c
 4. Create a directory called `shapefiles` and place into it your RGI glacier basins shapefile.  You may also wish to put a shapefile of the area to use for calculating stable i.e. non-glaciated ground statistics to feed into the error computations, and if you already have a shapefile of elevation bins intersected with glacier basins it can go in here too.  If not, you can create one using step 0 of the processing chain.
 5. Inside the output dir, the program will add to these to create the following directory structure (this example is for DEMs in 2011 and 2013)
 
-```
+```bash
 ├── dems_2011
 ├── dems_2013
 ├── dems_with_days_2011
@@ -86,6 +86,7 @@ The code is designed to work with certain standard directories and file naming c
 ├── stable_ground_stats
 └── years
 ```
+
 The directory setup should be complete and you can now create a configuration file in order to run the program.  I usually place this configuration file in the base directory root, but you can place it anywhere as the full path must be passed to python, as you'll see below.
 
 ## Example Configuration File
@@ -94,7 +95,7 @@ A configuration file should be created for each pipeline, with the settings pert
 
 Save the following in a file with the `.ini` extension.
 
-```
+```ini
 [main]
 year_1 = 2011
 year_2 = 2013
@@ -185,7 +186,7 @@ Filter the ice-only areas dh/dt raster
 Filtering is useful to remove outliers in the elevation change dataset.  This can remove some errors resulting from phase unwrapping errors in the InSAR processing, for example.  There are a number of methods that can be employed here, and it is recommended that a few are tried and inspected to see how they perform.
 They are set up in the configuration file.
 
-```
+```ini
 [filtering]
 filter_by_sigma = True
 sigma_order = 3
@@ -203,7 +204,7 @@ If the boolean values are set to `True` then the associated filtering is underta
 
 `percentile` is used where a little more control is required, perhaps because the distribution is such that you wish to trim a little more off one end of the distribution that the other.  A common setting for this is a 1-99% percentile or perhaps 2-98% filter.
 
-`specific_values` is used when you have inspected your data and found that there are clear thresholds that you wish to filter the data by.  For example, you may decide that elevation change values greater than -50m per year are unrealistic and arise from errors.  These can be filtered out by specifying min and max elevation change values and setting `filter_by_specific_values` to `True`. 
+`specific_values` is used when you have inspected your data and found that there are clear thresholds that you wish to filter the data by.  For example, you may decide that elevation change values greater than -50m per year are unrealistic and arise from errors.  These can be filtered out by specifying min and max elevation change values and setting `filter_by_specific_values` to `True`.
 
 `Step 7`
 
@@ -229,7 +230,7 @@ Create a radar penetration volume bias raster from reference DEM, ELA, upper ele
 
 In the configuration file, the section on penetration is as follows:
 
-```
+```ini
 [penetration]
 ela = 300
 ela_pen = 0
@@ -249,7 +250,7 @@ In order to implement this, you must supply a shapefile delineating the "stable 
 
 The path to this shapefile is specified in the configuration file.  Usually you would place this in the `shapefiles` directory within the base directory, during the setup of the project.
 
-```
+```ini
 [stable_ground]
 slope_binned_shapefile = ~/dems_pipeline_2011_to_2013/shapefiles/stable_ground.geojson
 ```
@@ -278,7 +279,7 @@ A section of the configuration file lets you set some of the parameters.
 
 `area_weighted_std` is added to the configuration file by step 11, so that it is available for step 12 even if you wish to run step 12 again on it's own.
 
-```
+```ini
 [errors]
 p2a = 2.188
 p2a_paulref = 5.03
@@ -311,13 +312,13 @@ The details of these examples are not important, it is just an illustration of t
 
 4. Testing with a variety of different input datasets.
 
-# Conclusion
+## Conclusion
 
 I hope this can be useful for academics, students, or enthusiasts to save time for a geodetic mass balance or similar project.
 
 Rob Webster, December 2020
 
-# REFERENCES
+## REFERENCES
 
 Braun et al. 2019, and Farias-Barahona et al. 2020, who in turn were
 influenced by the work of Malz et al. 2018, Rolstad et al. 2009 and Nuth et al. 2007.
