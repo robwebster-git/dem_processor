@@ -6,6 +6,7 @@ from configparser import ConfigParser
 import json
 import click
 import glob
+import pandas as pd
 
 
 @click.option('--config', type=click.Path(), help='Path to a configuration file for the processing')
